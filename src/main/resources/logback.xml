@@ -1,0 +1,27 @@
+<configuration>
+    <!-- Appender для логов уровня INFO и выше -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/telegram_bot_interactions.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender для логов уровня DEBUG и выше -->
+    <appender name="DEBUG" class="ch.qos.logback.core.FileAppender">
+        <file>logs/telegram_bot_debug.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger для INFO и выше -->
+    <root level="info">
+        <appender-ref ref="FILE" />
+    </root>
+
+    <!-- Логгер для DEBUG уровня -->
+    <logger name="com/example/telegram_bot_message_holiday_day_is_today/TelegramBotMessageHolidayDayIsTodayApplication.java" level="debug" additivity="false">
+        <appender-ref ref="DEBUG" />
+    </logger>
+</configuration>
