@@ -18,7 +18,4 @@ public class Scheduler {
     @Scheduled(cron = "0 * * * * *")
     public void updateHolidayDaily() {
     }
-
-    /* TODO: сделать так, чтобы бот автоматически присылал сообщения каждый день с новыми праздниками примерно в 5 утра*/
-
 }

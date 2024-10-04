@@ -15,34 +15,17 @@ public class MessageService {
         return message;
     }
 
-    public SendMessage createHelpMessage(long chatId) {
-        var text = """
-                Добро пожаловать в личный бот Алексея.
-                                
-                Здесь Вы сможете узнать какой сегодня праздник..
-                                
-                                
-                Holidays - праздники на сегодня
-                Saint Holidays - список Церковных и региональных праздников.
-                Horoscope - гороскоп для вашего знака зодиака на сегодня.
-                WORK IN PROGRESS...
-                """;
-        SendMessage message = new SendMessage(String.valueOf(chatId), text);
-        message.setReplyMarkup(keyboardService.getInlineKeyboardMarkupForHelpCommand());
-        return message;
-    }
-
     public SendMessage createStartMessage(long chatId) {
         var text = """
-                Справочная информация по боту
+                                          
+                По всем вопросам пишите в ТГ - @EternalFairTrade                
                                 
                 Holidays - список всех праздников в РФ на сегодня.
-                Saint Holidays - список Церковных и региональных праздников.
-                Horoscope - гороскоп для вашего знака зодиака на сегодня.
-                WORK IN PROGRESS...
+                Saint Holidays - список международных и церковных праздников.
+                Horoscope - гороскоп на сегодня.
                 """;
         SendMessage message = new SendMessage(String.valueOf(chatId), text);
-        message.setReplyMarkup(keyboardService.getInlineKeyboardMarkupForHelpCommand());
+        message.setReplyMarkup(keyboardService.getReplyKeyboardMarkup());
         return message;
     }
 
@@ -52,4 +35,17 @@ public class MessageService {
         return message;
     }
 
+    public SendMessage createHoroscopeMessage(long chatId) {
+        String text = "Укажите знак зодиака, на который ты хочешь посмотреть гороскоп на сегодня";
+
+        SendMessage message = new SendMessage(String.valueOf(chatId), text);
+        message.setReplyMarkup(keyboardService.getInlineKeyboardMarkupForHoroscope());
+        return message;
+    }
+
+    public SendMessage createHoroscopeMessageForZodiac(long chatId, String horoscopeText) {
+        SendMessage message = new SendMessage(String.valueOf(chatId), horoscopeText);
+        message.setReplyMarkup(keyboardService.getInlineKeyboardMarkupForHoroscopeForAnotherZodiacs());
+        return message;
+    }
 }

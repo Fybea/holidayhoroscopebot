@@ -1,6 +1,7 @@
 package com.example.telegram_bot_message_holiday_day_is_today;
 
 import com.example.telegram_bot_message_holiday_day_is_today.services.HolidayService;
+import com.example.telegram_bot_message_holiday_day_is_today.services.HoroscopeService;
 import com.example.telegram_bot_message_holiday_day_is_today.services.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,25 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
     private MessageService messageService;
     private static final Logger LOG = LoggerFactory.getLogger(TelegramBotMessageHolidayDayIsToday.class);
     private static final String START = "/start";
-    private static final String HELP = "Help";
+    private static final String MENU = "Menu";
     private static final String HOLIDAYS = "Holidays";
-    private static final String SAINT_HOLIDAYS = "Saint Holidays";
+    private static final String INTERNATIONAL_HOLIDAYS = "International Holidays";
+    private static final String HOROSCOPE = "Horoscope";
+    private static final String ARIES = "Aries";
+    private static final String TAURUS = "Taurus";
+    private static final String GEMINI = "Gemini";
+    private static final String CANCER = "Cancer";
+    private static final String LEO = "Leo";
+    private static final String VIRGO = "Virgo";
+    private static final String LIBRA = "Libra";
+    private static final String SCORPIO = "Scorpio";
+    private static final String SAGITTARIUS = "Sagittarius";
+    private static final String CAPRICORN = "Capricorn";
+    private static final String AQUARIUS = "Aquarius";
+    private static final String PISCES = "Pisces";
 
-    private static final HolidayService parser = new HolidayService();
+    private static final HolidayService holidayParser = new HolidayService();
+    private static final HoroscopeService horoscopeParser = new HoroscopeService();
 
     public TelegramBotMessageHolidayDayIsToday(@Value("${bot.token}") String botToken) {
         super(botToken);
@@ -38,21 +53,27 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
             String message = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
             switch (message) {
-                case START ->
-                        sendInlineKeyboardMessageForStartCommand(chatId); // sendInlineKeyboardMessageForHelpCommand(chatId);
-                case HELP -> sendInlineKeyboardMessageForHelpCommand(chatId); // helpCommand(chatId);
-                case HOLIDAYS -> sendInlineKeyboardMessage(chatId); // sendInlineKeyboardMessage(chatId);
-                case SAINT_HOLIDAYS ->
-                        sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);  // sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);
+                case START -> sendInlineKeyboardMessageForStartCommand(chatId);
+                case HOLIDAYS -> sendInlineKeyboardMessage(chatId);
+                case INTERNATIONAL_HOLIDAYS -> sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);
+                case HOROSCOPE -> sendInlineKeyboardMessageForHoroscopeCommand(chatId);
+                case ARIES -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, ARIES);
+                case TAURUS -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, TAURUS);
+                case GEMINI -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, GEMINI);
+                case CANCER -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, CANCER);
+                case LEO -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, LEO);
+                case VIRGO -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, VIRGO);
+                case LIBRA -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, LIBRA);
+                case SCORPIO -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, SCORPIO);
+                case SAGITTARIUS -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, SAGITTARIUS);
+                case CAPRICORN -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, CAPRICORN);
+                case AQUARIUS -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, AQUARIUS);
+                case PISCES -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, PISCES);
             }
         } else if (update.hasCallbackQuery()) {
             handleCallbackQuery(update.getCallbackQuery());
         }
-
-        /* TODO: добавить кнопку к второму сообщению "ГОРОСКОП", где если нет данных человека, спрашивать у него эти данные и вносить их в бд, чтобы потом доставить оттуда информацию, без дополнительного обращения к юзеру*/
-
     }
-
 
     private void handleCallbackQuery(CallbackQuery callbackQuery) {
         String callBackData = callbackQuery.getData();
@@ -72,27 +93,45 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
         LOG.info("Нажата кнопка: {} пользователем {}", callBackData, userName);
 
         switch (callBackData) {
-            case HOLIDAYS -> sendInlineKeyboardMessage(chatId);  // sendInlineKeyboardMessage(chatId);
-            case SAINT_HOLIDAYS ->
-                    sendInlineKeyboardMessageForSaintHolidaysCommand(chatId); // sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);
-            case HELP -> sendInlineKeyboardMessageForHelpCommand(chatId); // helpCommand(chatId);
+            case HOLIDAYS -> sendInlineKeyboardMessage(chatId);
+            case MENU -> sendInlineKeyboardMessageForStartCommand(chatId);
+            case INTERNATIONAL_HOLIDAYS -> sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);
+            case HOROSCOPE -> sendInlineKeyboardMessageForHoroscopeCommand(chatId);
+            case ARIES -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, ARIES);
+            case TAURUS -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, TAURUS);
+            case GEMINI -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, GEMINI);
+            case CANCER -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, CANCER);
+            case LEO -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, LEO);
+            case VIRGO -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, VIRGO);
+            case LIBRA -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, LIBRA);
+            case SCORPIO -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, SCORPIO);
+            case SAGITTARIUS -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, SAGITTARIUS);
+            case CAPRICORN -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, CAPRICORN);
+            case AQUARIUS -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, AQUARIUS);
+            case PISCES -> sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, PISCES);
         }
     }
 
 
     private void sendInlineKeyboardMessage(long chatId) {
-        String holidaysText = parser.getTodayHolidays(new StringBuilder());
+        String holidaysText = holidayParser.getTodayHolidays(new StringBuilder());
         SendMessage message = messageService.createHolidaysMessage(chatId, holidaysText);
         executeMessage(message);
     }
 
-    private void sendInlineKeyboardMessageForHelpCommand(long chatId) {
-        SendMessage message = messageService.createHelpMessage(chatId);
+    private void sendInlineKeyboardMessageForHoroscopeCommand(long chatId) {
+        SendMessage message = messageService.createHoroscopeMessage(chatId);
+        executeMessage(message);
+    }
+
+    private void sendInlineKeyboardMessageZodiacHoroscopeCommand(long chatId, String zodiac) {
+        String horoscopeText = horoscopeParser.getTodayHoroscopes(new StringBuilder(), zodiac);
+        SendMessage message = messageService.createHoroscopeMessageForZodiac(chatId, horoscopeText);
         executeMessage(message);
     }
 
     private void sendInlineKeyboardMessageForSaintHolidaysCommand(long chatId) {
-        String saintHolidayText = parser.getMoreTodayHolidays(new StringBuilder());
+        String saintHolidayText = holidayParser.getMoreTodayHolidays(new StringBuilder());
         SendMessage message = messageService.createSaintHolidaysMessage(chatId, saintHolidayText);
         executeMessage(message);
     }
@@ -110,11 +149,6 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
         }
     }
 
-//    private void holidaysCommand(Long chatId) {
-//        sendMessage(chatId, parser.getMoreTodayHolidays(new StringBuilder()));
-//
-//    }
-
     @Override
     public String getBotUsername() {
         return "WhichPrazdnikTodayBot";
@@ -124,203 +158,5 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
         return "Which holiday is today";
     }
 
-
-//    private void startCommand(Long chatId, String userName) {
-//        var text = """
-//                Добро пожаловать в личный бот Алексея.
-//
-//                Здесь Вы сможете узнать какой сегодня праздник..
-//
-//                Для этого воспользуйтесь командами:
-//                /holidays - праздники на сегодня
-//
-//                Дополнительные команды:
-//                /help - получение справки
-//                """;
-//
-//        var formattedText = String.format(text, userName, getBotName());
-//        sendMessage(chatId, formattedText);
-//    }
-
-
-//    private void helpCommand(Long chatId) {
-//        var text = """
-//                Справочная информация по боту
-//
-//                Holidays - список всех праздников в РФ на сегодня.
-//                Saint Holidays - список Церковных и региональных праздников.
-//                Horoscope - гороскоп для вашего знака зодиака на сегодня.
-//                WORK IN PROGRESS...
-//                """;
-//        sendMessage(chatId, text);
-//    }
-
-//    private void se\\dMessage(Long chatId, String text) {
-//        var chatIdStr = String.valueOf(chatId);
-//        var sendMessage = new SendMessage(chatIdStr, text);
-//        ReplyKeyboardMarkup keyboardMarkup = getReplyKeyboardMarkup();
-//        sendMessage.setReplyMarkup(keyboardMarkup);
-//        try {
-//            execute(sendMessage);
-//        } catch (TelegramApiException e) {
-//            LOG.error("Ошибка отправки сообщения", e);
-//        }
-//
-//    }
-
-//    private static ReplyKeyboardMarkup getReplyKeyboardMarkup() {
-//        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-//        keyboardMarkup.setResizeKeyboard(true);
-//        List<KeyboardRow> keyboardRowList = new ArrayList<>();
-//        KeyboardRow row = new KeyboardRow();
-//        row.add(HOLIDAYS);
-//        row.add(HELP);
-//        keyboardRowList.add(row);
-//        row = new KeyboardRow();
-//        row.add("Goroskop");
-//        row.add("Random");
-//        keyboardRowList.add(row);
-//        keyboardMarkup.setKeyboard(keyboardRowList);
-//        return keyboardMarkup;
-//    }
-//
-//    private void sendInlineKeyboardMessage(long chaId) {
-//        String strChatId = String.valueOf(chaId);
-//        SendMessage message = new SendMessage(strChatId, parser.getTodayHolidays(new StringBuilder()));
-//
-//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-//        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-//        List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//
-//        InlineKeyboardButton button = new InlineKeyboardButton();
-//        button.setText("Другие праздники");
-//        button.setCallbackData(SAINT_HOLIDAYS);
-//
-//        rowInline.add(button);
-//        rowsInline.add(rowInline);
-//
-//        inlineKeyboardMarkup.setKeyboard(rowsInline);
-//
-//        message.setReplyMarkup(inlineKeyboardMarkup);
-//
-//        try {
-//            execute(message);
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void sendInlineKeyboardMessageForHelpCommand(long chaId) {
-//
-//        var text = """
-//                Добро пожаловать в личный бот Алексея.
-//
-//                Здесь Вы сможете узнать какой сегодня праздник..
-//
-//
-//                Holidays - праздники на сегодня
-//                Saint Holidays - список Церковных и региональных праздников.
-//                Horoscope - гороскоп для вашего знака зодиака на сегодня.
-//                WORK IN PROGRESS...
-//                """;
-//
-//        String strChatId = String.valueOf(chaId);
-//        SendMessage message = new SendMessage(strChatId, text);
-//
-//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-//        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-//        List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//
-//        InlineKeyboardButton button1 = new InlineKeyboardButton();
-//        button1.setText("Праздники");
-//        button1.setCallbackData(HOLIDAYS);
-//
-//        InlineKeyboardButton button2 = new InlineKeyboardButton();
-//        button2.setText("Помощь");
-//        button2.setCallbackData(HELP);
-//
-//        rowInline.add(button1);
-//        rowInline.add(button2);
-//        rowsInline.add(rowInline);
-//
-//        inlineKeyboardMarkup.setKeyboard(rowsInline);
-//
-//        message.setReplyMarkup(inlineKeyboardMarkup);
-//
-//        try {
-//            execute(message);
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//
-//    private void sendInlineKeyboardMessageForStartCommand(long chaId) {
-//
-//        var text = """
-//                Справочная информация по боту
-//
-//                Holidays - список всех праздников в РФ на сегодня.
-//                Saint Holidays - список Церковных и региональных праздников.
-//                Horoscope - гороскоп для вашего знака зодиака на сегодня.
-//                WORK IN PROGRESS...
-//                """;
-//
-//        String strChatId = String.valueOf(chaId);
-//        SendMessage message = new SendMessage(strChatId, text);
-//
-//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-//        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-//        List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//
-//        InlineKeyboardButton button1 = new InlineKeyboardButton();
-//        button1.setText("Праздники");
-//        button1.setCallbackData(HOLIDAYS);
-//
-//        InlineKeyboardButton button2 = new InlineKeyboardButton();
-//        button2.setText("Помощь");
-//        button2.setCallbackData(HELP);
-//
-//        rowInline.add(button1);
-//        rowInline.add(button2);
-//        rowsInline.add(rowInline);
-//
-//        inlineKeyboardMarkup.setKeyboard(rowsInline);
-//
-//        message.setReplyMarkup(inlineKeyboardMarkup);
-//
-//        try {
-//            execute(message);
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//
-//    private void sendInlineKeyboardMessageForSaintHolidaysCommand(long chaId) {
-//        String strChatId = String.valueOf(chaId);
-//        SendMessage message = new SendMessage(strChatId, parser.getMoreTodayHolidays(new StringBuilder()));
-//
-//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-//        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-//        List<InlineKeyboardButton> rowInline = new ArrayList<>();
-//
-//        InlineKeyboardButton button = new InlineKeyboardButton();
-//        button.setText("ГОРОСКОП");
-//        button.setCallbackData("гороскоп");
-//
-//        rowInline.add(button);
-//        rowsInline.add(rowInline);
-//
-//        inlineKeyboardMarkup.setKeyboard(rowsInline);
-//
-//        message.setReplyMarkup(inlineKeyboardMarkup);
-//
-//        try {
-//            execute(message);
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 }
