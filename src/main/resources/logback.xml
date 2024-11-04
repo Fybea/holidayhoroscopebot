@@ -1,5 +1,5 @@
 <configuration>
-    <!-- Appender для логов уровня INFO и выше -->
+     Appender для логов уровня INFO и выше
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>logs/telegram_bot_interactions.log</file>
         <encoder>
@@ -16,7 +16,7 @@
     </appender>
 
     <!-- Root logger для INFO и выше -->
-    <root level="info">
+    <root level="ERROR">
         <appender-ref ref="FILE" />
     </root>
 
