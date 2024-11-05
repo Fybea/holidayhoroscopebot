@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,7 +18,7 @@ public class ActionService {
     private final UserRepository userRepository;
 
     @Autowired
-    public ActionService(ActionRepository actionRepository, UserRepository userRepository){
+    public ActionService(ActionRepository actionRepository, UserRepository userRepository) {
         this.actionRepository = actionRepository;
         this.userRepository = userRepository;
     }
@@ -27,7 +26,6 @@ public class ActionService {
     @Transactional
     public void saveAction(Long userid, String botCommand, LocalDateTime localDateTime) {
         User user = userRepository.findUserByUserId(userid).orElseThrow(NullPointerException::new);
-        System.out.println(user.getUserId());
         Action action = new Action();
         action.setUser(user);
         action.setBotCommand(botCommand);

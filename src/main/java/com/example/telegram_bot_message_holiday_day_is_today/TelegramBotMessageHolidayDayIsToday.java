@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.LocalDateTime;
 
-
 @Component
 public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot {
 
@@ -26,28 +25,14 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
     private ActionService actionService;
 
     @Autowired
+    private HolidayService holidayParser;
+
+    @Autowired
+    private HoroscopeService horoscopeParser;
+
+    @Autowired
     private UserService userService;
     private static final Logger LOG = LoggerFactory.getLogger(TelegramBotMessageHolidayDayIsToday.class);
-    private static final String START = "/start";
-    private static final String MENU = "Menu";
-    private static final String HOLIDAYS = "Holidays";
-    private static final String INTERNATIONAL_HOLIDAYS = "International Holidays";
-    private static final String HOROSCOPE = "Horoscope";
-    private static final String ARIES = "Aries";
-    private static final String TAURUS = "Taurus";
-    private static final String GEMINI = "Gemini";
-    private static final String CANCER = "Cancer";
-    private static final String LEO = "Leo";
-    private static final String VIRGO = "Virgo";
-    private static final String LIBRA = "Libra";
-    private static final String SCORPIO = "Scorpio";
-    private static final String SAGITTARIUS = "Sagittarius";
-    private static final String CAPRICORN = "Capricorn";
-    private static final String AQUARIUS = "Aquarius";
-    private static final String PISCES = "Pisces";
-
-    private static final HolidayService holidayParser = new HolidayService();
-    private static final HoroscopeService horoscopeParser = new HoroscopeService();
 
     public TelegramBotMessageHolidayDayIsToday(@Value("${bot.token}") String botToken) {
         super(botToken);
@@ -59,79 +44,38 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
             String message = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
             LocalDateTime time = LocalDateTime.now().withNano(0);
-
             Long userId = update.getMessage().getFrom().getId();
             String username = update.getMessage().getFrom().getUserName();
             String firstName = update.getMessage().getFrom().getFirstName();
             String lastName = update.getMessage().getFrom().getLastName();
             String languageCode = update.getMessage().getFrom().getLanguageCode();
 
+            BotCommand command = BotCommand.fromString(message);
+
             userService.saveUser(userId, username, firstName, lastName, languageCode);
 
-            switch (message) {
-                case START -> {
-                    sendInlineKeyboardMessageForStartCommand(chatId);
-                    actionService.saveAction(userId, START, time);
-                }
-                case HOLIDAYS -> {
-                    sendInlineKeyboardMessage(chatId);
-                    actionService.saveAction(userId, HOLIDAYS, time);
-                }
-                case INTERNATIONAL_HOLIDAYS -> {
-                    sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);
-                    actionService.saveAction(userId, INTERNATIONAL_HOLIDAYS, time);
-                }
-                case HOROSCOPE -> {
-                    sendInlineKeyboardMessageForHoroscopeCommand(chatId);
-                    actionService.saveAction(userId, HOROSCOPE, time);
-                }
-                case ARIES -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, ARIES);
-                    actionService.saveAction(userId, ARIES, time);
-                }
-                case TAURUS -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, TAURUS);
-                    actionService.saveAction(userId, TAURUS, time);
-                }
-                case GEMINI -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, GEMINI);
-                    actionService.saveAction(userId, GEMINI, time);
-                }
-                case CANCER -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, CANCER);
-                    actionService.saveAction(userId, CANCER, time);
-                }
-                case LEO -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, LEO);
-                    actionService.saveAction(userId, LEO, time);
-                }
-                case VIRGO -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, VIRGO);
-                    actionService.saveAction(userId, VIRGO, time);
-                }
-                case LIBRA -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, LIBRA);
-                    actionService.saveAction(userId, LIBRA, time);
-                }
-                case SCORPIO -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, SCORPIO);
-                    actionService.saveAction(userId, SCORPIO, time);
-                }
-                case SAGITTARIUS -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, SAGITTARIUS);
-                    actionService.saveAction(userId, SAGITTARIUS, time);
-                }
-                case CAPRICORN -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, CAPRICORN);
-                    actionService.saveAction(userId, CAPRICORN, time);
-                }
-                case AQUARIUS -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, AQUARIUS);
-                    actionService.saveAction(userId, AQUARIUS, time);
-                }
-                case PISCES -> {
-                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, PISCES);
-                    actionService.saveAction(userId, PISCES, time);
+            if (command != null) {
+                switch (command) {
+                    case START -> {
+                        sendInlineKeyboardMessageForStartCommand(chatId);
+                        actionService.saveAction(userId, command.getCommand(), time);
+                    }
+                    case HOLIDAYS -> {
+                        sendInlineKeyboardMessage(chatId);
+                        actionService.saveAction(userId, command.getCommand(), time);
+                    }
+                    case INTERNATIONAL_HOLIDAYS -> {
+                        sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);
+                        actionService.saveAction(userId, command.getCommand(), time);
+                    }
+                    case HOROSCOPE -> {
+                        sendInlineKeyboardMessageForHoroscopeCommand(chatId);
+                        actionService.saveAction(userId, command.getCommand(), time);
+                    }
+                    case ARIES, TAURUS, GEMINI, CANCER, LEO, VIRGO, LIBRA, SCORPIO, SAGITTARIUS, CAPRICORN, AQUARIUS, PISCES -> {
+                        sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, command.getCommand());
+                        actionService.saveAction(userId, command.getCommand(), time);
+                    }
                 }
             }
         } else if (update.hasCallbackQuery()) {
@@ -157,74 +101,34 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
 
         LOG.info("Нажата кнопка: {} пользователем {}", callBackData, userName);
 
-        switch (callBackData) {
-            case HOLIDAYS -> {
-                sendInlineKeyboardMessage(chatId);
-                actionService.saveAction(callbackQuery.getFrom().getId(), HOLIDAYS, time);
-            }
-            case MENU -> {
-                sendInlineKeyboardMessageForStartCommand(chatId);
-                actionService.saveAction(callbackQuery.getFrom().getId(), MENU, time);
-            }
-            case INTERNATIONAL_HOLIDAYS -> {
-                sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);
-                actionService.saveAction(callbackQuery.getFrom().getId(), INTERNATIONAL_HOLIDAYS, time);
-            }
-            case HOROSCOPE -> {
-                sendInlineKeyboardMessageForHoroscopeCommand(chatId);
-                actionService.saveAction(callbackQuery.getFrom().getId(), HOROSCOPE, time);
-            }
-            case ARIES -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, ARIES);
-                actionService.saveAction(callbackQuery.getFrom().getId(), ARIES, time);
-            }
-            case TAURUS -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, TAURUS);
-                actionService.saveAction(callbackQuery.getFrom().getId(), TAURUS, time);
-            }
-            case GEMINI -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, GEMINI);
-                actionService.saveAction(callbackQuery.getFrom().getId(), GEMINI, time);
-            }
-            case CANCER -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, CANCER);
-                actionService.saveAction(callbackQuery.getFrom().getId(), CANCER, time);
-            }
-            case LEO -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, LEO);
-                actionService.saveAction(callbackQuery.getFrom().getId(), LEO, time);
-            }
-            case VIRGO -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, VIRGO);
-                actionService.saveAction(callbackQuery.getFrom().getId(), VIRGO, time);
-            }
-            case LIBRA -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, LIBRA);
-                actionService.saveAction(callbackQuery.getFrom().getId(), LIBRA, time);
-            }
-            case SCORPIO -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, SCORPIO);
-                actionService.saveAction(callbackQuery.getFrom().getId(), SCORPIO, time);
-            }
-            case SAGITTARIUS -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, SAGITTARIUS);
-                actionService.saveAction(callbackQuery.getFrom().getId(), SAGITTARIUS, time);
-            }
-            case CAPRICORN -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, CAPRICORN);
-                actionService.saveAction(callbackQuery.getFrom().getId(), CAPRICORN, time);
-            }
-            case AQUARIUS -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, AQUARIUS);
-                actionService.saveAction(callbackQuery.getFrom().getId(), AQUARIUS, time);
-            }
-            case PISCES -> {
-                sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, PISCES);
-                actionService.saveAction(callbackQuery.getFrom().getId(), PISCES, time);
+        BotCommand command = BotCommand.fromString(callBackData);
+        if (command != null) {
+            Long userId = callbackQuery.getFrom().getId();
+
+            switch (command) {
+                case HOLIDAYS -> {
+                    sendInlineKeyboardMessage(chatId);
+                    actionService.saveAction(userId, command.getCommand(), time);
+                }
+                case MENU -> {
+                    sendInlineKeyboardMessageForStartCommand(chatId);
+                    actionService.saveAction(userId, command.getCommand(), time);
+                }
+                case INTERNATIONAL_HOLIDAYS -> {
+                    sendInlineKeyboardMessageForSaintHolidaysCommand(chatId);
+                    actionService.saveAction(userId, command.getCommand(), time);
+                }
+                case HOROSCOPE -> {
+                    sendInlineKeyboardMessageForHoroscopeCommand(chatId);
+                    actionService.saveAction(userId, command.getCommand(), time);
+                }
+                case ARIES, TAURUS, GEMINI, CANCER, LEO, VIRGO, LIBRA, SCORPIO, SAGITTARIUS, CAPRICORN, AQUARIUS, PISCES -> {
+                    sendInlineKeyboardMessageZodiacHoroscopeCommand(chatId, command.getCommand());
+                    actionService.saveAction(userId, command.getCommand(), time);
+                }
             }
         }
     }
-
 
     public void sendInlineKeyboardMessage(long chatId) {
         String holidaysText = holidayParser.getTodayHolidays(new StringBuilder());
@@ -270,6 +174,4 @@ public class TelegramBotMessageHolidayDayIsToday extends TelegramLongPollingBot 
     public String getBotName() {
         return "Which holiday is today";
     }
-
-
 }

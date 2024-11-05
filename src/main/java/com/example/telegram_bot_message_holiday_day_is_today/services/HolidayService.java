@@ -24,7 +24,6 @@ public class HolidayService {
                 stringBuilder.append("▫\uFE0F").append(name.text()).append(", \n");
             }
             stringBuilder.append("\n").append("");
-            System.out.println(getMoreTodayHolidays(new StringBuilder()));
             return stringBuilder.toString();
         } catch (Exception e) {
             e.printStackTrace();

@@ -10,7 +10,6 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Configuration
 public class TelegramBotMessageHolidayDayIsTodayConfiguration {
-
     @Bean
     public TelegramBotsApi telegramBotsApi
             (TelegramBotMessageHolidayDayIsToday telegramBotMessageHolidayDayIsToday) throws TelegramApiException {

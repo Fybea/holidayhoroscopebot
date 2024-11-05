@@ -8,13 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class Scheduler {
     final TelegramBotMessageHolidayDayIsToday telegramBotMessageHolidayDayIsToday;
-
     @Autowired
     public Scheduler(TelegramBotMessageHolidayDayIsToday telegramBotMessageHolidayDayIsToday) {
 
         this.telegramBotMessageHolidayDayIsToday = telegramBotMessageHolidayDayIsToday;
     }
-
     @Scheduled(cron = "0 * * * * *")
     public void updateHolidayDaily() {
     }

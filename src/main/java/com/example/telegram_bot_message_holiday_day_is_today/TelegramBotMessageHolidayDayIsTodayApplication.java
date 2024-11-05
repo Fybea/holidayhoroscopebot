@@ -9,12 +9,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class TelegramBotMessageHolidayDayIsTodayApplication  {
-
 	private static final Logger logger = LoggerFactory.getLogger(TelegramBotMessageHolidayDayIsTodayApplication.class);
-
 	public static void main(String[] args) {
 		SpringApplication.run(TelegramBotMessageHolidayDayIsTodayApplication.class, args);
 		logger.debug("Debug: ");
 	}
-
 }

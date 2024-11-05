@@ -42,8 +42,4 @@ public class User {
 
     @Column(name = "languagecode")
     private String languageCode;
-//
-//    @Version // Добавлено для оптимистичной блокировки
-//    private Long version;
-
 }
