@@ -17,7 +17,9 @@ public class HolidayService {
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.forLanguageTag("ru"));
             stringBuilder.append(now.format(formatter) + " " + "\uD83D\uDDD3" + " " + now.format(DateTimeFormatter.ofPattern("EEEE", Locale.forLanguageTag("ru")))).append("\n\n");
-            var document = Jsoup.connect("https://kakoysegodnyaprazdnik.ru/").get();
+            var document = Jsoup.connect("https://kakoysegodnyaprazdnik.ru/").
+                    userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+                    .get();
             Elements superElement = document.select("div[id=prin]").prevAll();
             Elements answer = superElement.select("span[itemprop=text]");
             for (Element name : answer) {
